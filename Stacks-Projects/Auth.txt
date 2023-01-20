@@ -1,0 +1,77 @@
+Hiro-Wallet Authentication to App Guide:
+Step1 - Install Stacks connect via 
+
+ Npm i @stacks/connect-react
+
+Step2- Copy
+
+import { AppConfig, UserSession, showConnect } from "@stacks/connect";
+
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
+
+function authenticate() {
+  showConnect({
+    appDetails: {
+      name: "My App",
+      icon: window.location.origin + "/my-app-logo.svg",
+    },
+    redirectTo: "/",
+    onFinish: () => {
+      let userData = userSession.loadUserData();
+      // Save or otherwise utilize userData post-authentication
+    },
+    userSession: userSession,
+  });
+}
+
+Note: Create a auth.js file in directory of choice, preferable src directory
+
+Step3- Import to desired button click page for Hiro wallet Authenticate
+
+Step4- Here your goin to get this 'ERROR in ./node_modules/cipher-base/index.js'
+
+Solve Error 
+step1--
+
+yarn add process browserify-zlib stream-browserify util buffer assert @craco/craco
+
+step2--
+
+Change scripts code config in package.json
+"scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+
+step3--
+Finally, create a new file in the root of the project craco.config.js with these contents:
+const webpack = require("webpack");
+
+module.exports = {
+  webpack: {
+    configure: {
+      resolve: {
+        fallback: {
+          process: require.resolve("process/browser"),
+          zlib: require.resolve("browserify-zlib"),
+          stream: require.resolve("stream-browserify"),
+          util: require.resolve("util"),
+          buffer: require.resolve("buffer"),
+          asset: require.resolve("assert"),
+        },
+      },
+      plugins: [
+        new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
+          process: "process/browser",
+        }),
+      ],
+    },
+  },
+};
+
+
+clown hero jelly shaft have vicious promote claim address enable era album uncle image ensure upper clap parent program earn mule song avoid warrior

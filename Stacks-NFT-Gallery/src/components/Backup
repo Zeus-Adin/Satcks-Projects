@@ -1,0 +1,35 @@
+let totalUsersTransactionsCount = apiGetUsersTotalTransaction.data['total'];    
+    let offSeter=0;
+    let getArgsRpr1 = [], getArgsRpr2 = [];
+    let argsCount1=0, argsCount2=0;
+    let argsClean1=[],argsClean2=[];
+    let finalArgsResult1=[],finalArgsResult2=[];
+
+    while(offSeter < totalUsersTransactionsCount){
+        let apiGetUsersTransactionHistory = await axios.get('https://stacks-node-api.mainnet.stacks.co/extended/v1/address/' + principal + '/transactions?offset=' + offSeter + '&limit=50');
+        for(let x in apiGetUsersTransactionHistory.data.results){
+            let contract = apiGetUsersTransactionHistory.data.results[x].tx_type;        
+            if(contract === "contract_call"){            
+                let contractFunctionName = apiGetUsersTransactionHistory.data.results[x].contract_call['function_name'];
+                if(contractFunctionName === "send-message"){
+                    let contractId = apiGetUsersTransactionHistory.data.results[x].contract_call['contract_id'].split('.');
+                    let contractName = contractId[1].split('-');
+                    let contractIdentifyer = contractId[0] + '.' + contractName[0] + '-' + contractName[1] + '-' + contractName[2];
+                    if(contractIdentifyer === "SP3T3JC6V4S94PPB7WFEK17863HPG3EYP6CJ65E7M.derupt-mia-alpha"){                        
+                        getArgsRpr1[argsCount1] = apiGetUsersTransactionHistory.data.results[x].contract_call.function_args[0].repr;
+                        getArgsRpr2[argsCount2] = apiGetUsersTransactionHistory.data.results[x].contract_call.function_args[1].repr;
+                        argsCount1=argsCount1+1;
+                        argsCount2=argsCount2+1
+                    }                
+                }
+            }
+        }
+        for(let x in getArgsRpr1){
+            argsClean1 = getArgsRpr1[x].split('"');
+            argsClean2 = getArgsRpr2[x].split('"');
+            finalArgsResult1.push(argsClean1[1]);
+            finalArgsResult2.push(argsClean2[1]);
+        }       
+
+        offSeter = offSeter +50;
+    }
